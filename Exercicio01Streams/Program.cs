@@ -21,9 +21,8 @@ Nota: Deve-se realizar o tratamento de exceções usando bloco try/catch
 try
 {
     string caminhoArquivo = @"C:\Jessé Temp\015 - Udemy\C#\Macoratti\ArquivosDiretoriosStreams\Exercicio01Streams\txt\exercicio.txt";
-    bool controle = true;
  
-    while (controle)
+    while (true)
     {
 
         Console.WriteLine("\n-----------------------\n" +
@@ -40,56 +39,27 @@ try
 
         switch (opcao)
         {
-            //Obs: Transformar tudo em método statico e que não retorna nada (void)
             case "1": 
-                {
-
-                    using FileStream fs = new FileStream(caminhoArquivo, FileMode.Create, FileAccess.Write);
-
-                }
+                CriarArquivo(caminhoArquivo);
                 break;
 
             case "2":
-                {
                     
-                    Console.WriteLine("\nEscreva abaixo o que deseja inserir no arquivo:\n");
-                    string? texto = Console.ReadLine();
-                    
-                    using StreamWriter sw = new StreamWriter(caminhoArquivo, true);//true indica que o que será escrito vai para o final do arquivo sem substituir o que já está escrito
-                    sw.WriteLine(texto);
-                    
-                }
+                AdicionarConteudo(caminhoArquivo);
                 break;
 
             case "3":
-                {
-                    //Obs: verificar se o arquivo existe
-                    Console.WriteLine("\nConteúdo do arquivo:\n");
-                    using StreamReader sr = new StreamReader(caminhoArquivo);
-                    
-                    string? linha;
-                    while ((linha = sr.ReadLine()) != null)
-                    {
-                        Console.WriteLine(linha);
-                    }
-                }
+                
+                ExibirArquivo(caminhoArquivo);
                 break;
 
             case "4":
-                {
-                    Console.WriteLine("\nDigite o termo que gostaria de localizar:");
-                    string? termo = Console.ReadLine();
-                    //obs: verfifica se o arquivo existe antes
-
-                    using FileStream fs = new FileStream(caminhoArquivo, FileMode.Open, FileAccess.Read);
-                    fs.Seek(0, termo);
-                    
-                }
+         
+                ProcurarNoArquivo(caminhoArquivo);
                 break;
 
             case "5":
-                controle = false;
-                break;
+                return;
 
             default:
                 Console.WriteLine("\nOPÇÃO INVÁLIDA!\n");
@@ -127,3 +97,143 @@ Console.WriteLine("\nPressione qualquer tecla para continuar...");
 
 
 Console.ReadKey();
+
+static void CriarArquivo(string caminho)
+{
+    try
+    {
+        
+        using FileStream fs = new FileStream(caminho, FileMode.Create, FileAccess.Write);
+
+    }
+    catch (IOException ex)
+    {
+
+        Console.WriteLine($"IOException Erro: {ex.Message}");
+
+    }
+
+    catch (Exception ex)
+    {
+
+        Console.WriteLine($"Exception Erro: {ex.Message}");
+
+    }
+}
+
+static void AdicionarConteudo(string caminho)
+{
+    try
+    {
+
+        Console.WriteLine("\nEscreva abaixo o que deseja inserir no arquivo:");
+        string? texto = Console.ReadLine();
+
+        using StreamWriter sw = new StreamWriter(caminho, true);//true indica que o que será escrito vai para o final do arquivo sem substituir o que já está escrito
+        sw.WriteLine(texto);
+
+    }
+    catch (IOException ex)
+    {
+
+        Console.WriteLine($"IOException Erro: {ex.Message}");
+
+    }
+
+    catch (Exception ex)
+    {
+
+        Console.WriteLine($"Exception Erro: {ex.Message}");
+
+    }
+}
+
+static void ExibirArquivo(string caminho)
+{
+    try
+    {
+
+        if (!File.Exists(caminho))
+        {
+            Console.WriteLine("O arquivo ainda não foi criado.");
+        }
+        else
+        {
+
+            Console.WriteLine("\nConteúdo do arquivo:\n");
+            using StreamReader sr = new StreamReader(caminho);
+
+            string? linha;
+            while ((linha = sr.ReadLine()) != null)
+            {
+                Console.WriteLine(linha);
+            }
+
+        }
+
+    }
+    catch (IOException ex)
+    {
+
+        Console.WriteLine($"IOException Erro: {ex.Message}");
+
+    }
+
+    catch (Exception ex)
+    {
+
+        Console.WriteLine($"Exception Erro: {ex.Message}");
+
+    }
+}
+
+static void ProcurarNoArquivo(string caminho)
+{
+    try
+    {
+
+        Console.WriteLine("\nDigite o termo que gostaria de localizar:");
+        string? termo = Console.ReadLine();
+        if (!File.Exists(caminho))
+        {
+            Console.WriteLine("O arquivo ainda não foi criado.");
+        }
+        else
+        {
+            bool encontrado = false;
+            using StreamReader sr = new StreamReader(caminho);
+            string? linha;
+            int numLinha = 0;
+            while ((linha = sr.ReadLine()) != null)
+            {
+                numLinha++;
+                if ((linha.Contains(termo)))
+                {
+                    Console.WriteLine($"\nTexto encontrado na linha {numLinha}: {linha}");
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado)
+            {
+                Console.WriteLine($"\nTermo \"{termo}\" não encontrado!");
+            }
+
+        }
+
+    }
+    catch (IOException ex)
+    {
+
+        Console.WriteLine($"IOException Erro: {ex.Message}");
+
+    }
+
+    catch (Exception ex)
+    {
+
+        Console.WriteLine($"Exception Erro: {ex.Message}");
+
+    }
+}
